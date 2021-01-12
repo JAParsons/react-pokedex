@@ -1,0 +1,10 @@
+{
+  "name": "pokeapi",
+  "version": "1.0.0",
+  "description": "A Pokemon API",
+  "main": "index.js",
+  "dependencies": {
+    "axios": "^0.21.1"
+  },
+  "devDependencies": {}
+}
