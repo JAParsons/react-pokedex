@@ -5,10 +5,21 @@ const getPokemonList = async (offset = 0, limit = 20) => {
     const response = await axios.get(
       `https://pokeapi.co/api/v2/pokemon/?offset=${offset}&limit=${limit}`
     );
-    return await response.data;
+    return response.data;
   } catch (error) {
     console.error(error);
   }
 };
 
-export { getPokemonList };
+const getPokemon = async (query) => {
+  try {
+    const response = await axios.get(
+      `https://pokeapi.co/api/v2/pokemon/${query}`
+    );
+    return response.data;
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+export { getPokemonList, getPokemon };
