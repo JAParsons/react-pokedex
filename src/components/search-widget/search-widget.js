@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { getPokemon } from 'packages/pokeapi';
+import Pokemon from 'components/pokemon-card/pokemon-card';
 
 const SearchWidget = () => {
   const [searchStr, setSearchStr] = useState('');
@@ -23,7 +24,8 @@ const SearchWidget = () => {
         />
         <button type="submit">Search</button>
       </form>
-      {pokemon ? <p>{JSON.stringify(pokemon)}</p> : null}
+      {/* May need to deep copy this later on */}
+      {pokemon ? <Pokemon data={pokemon} /> : null}
     </>
   );
 };
