@@ -4,11 +4,10 @@ import SearchWidget from 'components/search-widget/search-widget';
 
 describe('search widget', () => {
   it('renders correctly', () => {
-    // Arrange & Act
+    // Arrange
     render(<SearchWidget />);
-    const input = screen.queryByPlaceholderText('Enter name or id');
 
-    // Assert
-    expect(input).toBeInTheDocument();
+    // Act & Assert
+    expect(screen.getByPlaceholderText('Enter name or id')).toBeInTheDocument();
   });
 });

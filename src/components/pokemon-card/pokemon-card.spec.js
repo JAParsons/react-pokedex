@@ -4,12 +4,11 @@ import PokemonCard from 'components/pokemon-card/pokemon-card';
 
 describe('search widget', () => {
   it('renders correctly', () => {
-    // Arrange & Act
+    // Arrange
     render(<PokemonCard data={DATA} />);
-    const nameText = screen.queryByText('This Pokemon is called mew');
 
-    // Assert
-    expect(nameText).toBeInTheDocument();
+    // Act & Assert
+    expect(screen.getByText('This Pokemon is called mew')).toBeInTheDocument();
   });
 });
 
