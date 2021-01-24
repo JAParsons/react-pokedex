@@ -3,6 +3,7 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import App from './app';
 
+// TODO - mock the fetch call
 describe('App', () => {
   beforeEach(() => {
     // Arrange
@@ -16,12 +17,11 @@ describe('App', () => {
 
   it('can search for a Pokemon', async () => {
     // Act
-    userEvent.type(screen.getByPlaceholderText('Enter name or id'), 'pikachu');
+    userEvent.type(screen.getByPlaceholderText('Enter name or id'), 'mew');
     userEvent.click(screen.getByRole('button'));
 
     // Assert
-    expect(
-      await screen.findByText('This Pokemon is called pikachu')
-    ).toBeInTheDocument();
+    expect(await screen.findByText('Mew')).toBeInTheDocument();
+    expect(await screen.findByRole('img')).toBeInTheDocument();
   });
 });

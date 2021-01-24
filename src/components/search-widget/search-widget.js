@@ -10,11 +10,12 @@ const SearchWidget = () => {
     event.preventDefault();
     const data = await getPokemon(searchStr);
     setPokemon(data);
+    setSearchStr('');
   };
 
   return (
     <>
-      <p>Search Pokedex</p>
+      <p>Search for a Pokemon</p>
       <form onSubmit={(event) => handleSubmit(event)}>
         <input
           type="text"
