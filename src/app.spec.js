@@ -30,7 +30,10 @@ describe('App', () => {
     );
 
     // Act
-    userEvent.type(screen.getByPlaceholderText('Enter name or id'), 'mew');
+    userEvent.type(
+      screen.getByPlaceholderText('Enter name or id'),
+      'MadeUpPokemon'
+    );
     userEvent.click(screen.getByRole('button'));
 
     // Assert

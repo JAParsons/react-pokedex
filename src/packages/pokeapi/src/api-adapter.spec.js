@@ -11,7 +11,7 @@ describe('fetch a list of Pokemon', () => {
     );
 
     // Act
-    const response = await getPokemonList();
+    const response = await getPokemonList({});
 
     // Assert
     expect(response).toHaveProperty('count');
@@ -28,7 +28,7 @@ describe('fetch a list of Pokemon', () => {
     );
 
     // Act
-    const { results: pokemonList } = await getPokemonList(20);
+    const { results: pokemonList } = await getPokemonList({ offset: 20 });
 
     // Assert
     expect(pokemonList.length).toBe(20);
@@ -43,7 +43,7 @@ describe('fetch a list of Pokemon', () => {
     );
 
     // Act
-    const { results: pokemonList } = await getPokemonList();
+    const { results: pokemonList } = await getPokemonList({});
 
     // Assert
     expect(pokemonList.length).toBe(100);
@@ -56,7 +56,10 @@ describe('fetch a list of Pokemon', () => {
     );
 
     // Act
-    const { results: pokemonList } = await getPokemonList(3, 3);
+    const { results: pokemonList } = await getPokemonList({
+      offset: 3,
+      limit: 3
+    });
 
     // Assert
     expect(pokemonList.length).toBe(3);
@@ -73,7 +76,7 @@ describe('fetches individual Pokemon', () => {
 
   it('fetches a Pokemon', async () => {
     // Act
-    const pokemon = await getPokemon(25);
+    const pokemon = await getPokemon({ query: 25 });
 
     // Assert
     expect(pokemon).toHaveProperty('id');
@@ -90,7 +93,7 @@ describe('fetches individual Pokemon', () => {
 
   it('fetches a Pokemon by ID', async () => {
     // Act
-    const pokemon = await getPokemon(25);
+    const pokemon = await getPokemon({ query: 25 });
 
     // Assert
     expect(pokemon.id).toBe(25);
@@ -98,7 +101,7 @@ describe('fetches individual Pokemon', () => {
 
   it('fetches a Pokemon by name', async () => {
     // Act
-    const pokemon = await getPokemon('pikachu');
+    const pokemon = await getPokemon({ query: 'pikachu' });
 
     // Assert
     expect(pokemon.name).toBe('pikachu');

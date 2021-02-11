@@ -8,7 +8,7 @@ const SearchWidget = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    const data = await getPokemon(searchStr);
+    const data = await getPokemon({ query: searchStr });
     setPokemon(data);
     setSearchStr('');
   };
