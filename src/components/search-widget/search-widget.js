@@ -26,7 +26,7 @@ const SearchWidget = () => {
         <button type="submit">Search</button>
       </form>
       {/* May need to deep copy this later on */}
-      {pokemon ? <Pokemon data={pokemon} /> : null}
+      {pokemon ? <Pokemon pokemonData={pokemon} /> : null}
     </>
   );
 };

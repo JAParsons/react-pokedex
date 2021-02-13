@@ -13,17 +13,37 @@ const getPokemonList = async ({ offset = 0, limit = 20 }) => {
   }
 };
 
-const getPokemon = async ({ query }) => {
+const getPokemon = async ({ query = '1' }) => {
   try {
     const response = await axios.get(
       `https://pokeapi.co/api/v2/pokemon/${query}`
     );
-    // TODO - do the data transformation here
-    return response.data;
+
+    return transformPokemonResponse({ response });
   } catch (error) {
     // TODO - decide how to handle errors
-    console.error(error.response.status);
+    console.error(error);
   }
 };
 
-export { getPokemonList, getPokemon };
+const transformPokemonResponse = ({ response }) => {
+  const {
+    data: {
+      id,
+      name,
+      height,
+      weight,
+      types,
+      sprites: {
+        other: {
+          'official-artwork': { front_default: image }
+        }
+      }
+    }
+  } = response;
+  const typeNames = types.map(({ type: { name } }) => name);
+
+  return { id, name, height, weight, types: typeNames, image };
+};
+
+export { getPokemonList, getPokemon, transformPokemonResponse };
