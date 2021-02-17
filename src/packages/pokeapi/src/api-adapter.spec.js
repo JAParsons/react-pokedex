@@ -104,6 +104,74 @@ describe('fetches individual Pokemon', () => {
   });
 });
 
+describe('error handling', () => {
+  it('returns a ResponseError if the API throws a 404', async () => {
+    // Arrange
+    axios.get.mockImplementation(() =>
+      Promise.reject({ response: { status: 404 } })
+    );
+
+    // Act
+    const response = await getPokemon({ query: 'totallyNotARealPokemon' });
+
+    // Assert
+    expect(response).toBeInstanceOf(Error);
+    expect(response.message).toBe('ResponseError - Client received a 404');
+  });
+
+  it('returns a ResponseError if the API throws a 500', async () => {
+    // Arrange
+    axios.get.mockImplementation(() =>
+      Promise.reject({ response: { status: 500 } })
+    );
+
+    // Act
+    const response = await getPokemon({ query: 'totallyNotARealPokemon' });
+
+    // Assert
+    expect(response).toBeInstanceOf(Error);
+    expect(response.message).toBe('ResponseError - Client received a 500');
+  });
+
+  it('returns a RequestError if the request fails to send', async () => {
+    // Arrange
+    axios.get.mockImplementation(() => Promise.reject({ request: {} }));
+
+    // Act
+    const response = await getPokemon({ query: 'bulbasaur' });
+
+    // Assert
+    expect(response).toBeInstanceOf(Error);
+    expect(response.message).toBe('RequestError - Request failed to send');
+  });
+
+  it('returns a ParsingError if the response cannot be parsed', async () => {
+    // Arrange
+    axios.get.mockImplementation(() => Promise.resolve({ unparsable: {} }));
+
+    // Act
+    const response = await getPokemon({ query: 'bulbasaur' });
+
+    // Assert
+    expect(response).toBeInstanceOf(Error);
+    expect(response.message).toBe('ParsingError - Failed to parse response');
+  });
+
+  it('returns a UnknownError if an unexpected response is received', async () => {
+    // Arrange
+    axios.get.mockImplementation(() => Promise.reject({ unexpected: {} }));
+
+    // Act
+    const response = await getPokemon({ query: 'bulbasaur' });
+
+    // Assert
+    expect(response).toBeInstanceOf(Error);
+    expect(response.message).toBe(
+      'UnknownError - Something went wrong when processing the request'
+    );
+  });
+});
+
 describe('response transformations', () => {
   it('transforms the response for an individual Pokemon', () => {
     // Act
