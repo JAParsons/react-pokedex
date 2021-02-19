@@ -4,6 +4,12 @@ import {
   getPokemon,
   transformPokemonResponse
 } from './api-adapter';
+import {
+  RequestError,
+  ResponseError,
+  ParsingError,
+  UnknownError
+} from './errors';
 
 jest.mock('axios');
 
@@ -115,7 +121,7 @@ describe('error handling', () => {
     const response = await getPokemon({ query: 'totallyNotARealPokemon' });
 
     // Assert
-    expect(response).toBeInstanceOf(Error);
+    expect(response).toBeInstanceOf(ResponseError);
     expect(response.message).toBe('ResponseError - Client received a 404');
   });
 
@@ -129,7 +135,7 @@ describe('error handling', () => {
     const response = await getPokemon({ query: 'totallyNotARealPokemon' });
 
     // Assert
-    expect(response).toBeInstanceOf(Error);
+    expect(response).toBeInstanceOf(ResponseError);
     expect(response.message).toBe('ResponseError - Client received a 500');
   });
 
@@ -141,7 +147,7 @@ describe('error handling', () => {
     const response = await getPokemon({ query: 'bulbasaur' });
 
     // Assert
-    expect(response).toBeInstanceOf(Error);
+    expect(response).toBeInstanceOf(RequestError);
     expect(response.message).toBe('RequestError - Request failed to send');
   });
 
@@ -153,7 +159,7 @@ describe('error handling', () => {
     const response = await getPokemon({ query: 'bulbasaur' });
 
     // Assert
-    expect(response).toBeInstanceOf(Error);
+    expect(response).toBeInstanceOf(ParsingError);
     expect(response.message).toBe('ParsingError - Failed to parse response');
   });
 
@@ -165,7 +171,7 @@ describe('error handling', () => {
     const response = await getPokemon({ query: 'bulbasaur' });
 
     // Assert
-    expect(response).toBeInstanceOf(Error);
+    expect(response).toBeInstanceOf(UnknownError);
     expect(response.message).toBe(
       'UnknownError - Something went wrong when processing the request'
     );

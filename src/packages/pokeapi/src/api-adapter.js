@@ -1,4 +1,10 @@
 import axios from 'axios';
+import {
+  RequestError,
+  ResponseError,
+  ParsingError,
+  UnknownError
+} from './errors';
 
 const getPokemonList = async ({ offset = 0, limit = 20 }) => {
   try {
@@ -42,23 +48,19 @@ const transformPokemonResponse = ({ response }) => {
 
     return { id, name, height, weight, types: typeNames, image };
   } catch (error) {
-    return new Error('ParsingError - Failed to parse response');
+    return new ParsingError();
   }
 };
 
 const handleError = (error) => {
   if (error.response) {
     // client received an error response (5xx, 4xx)
-    return new Error(
-      `ResponseError - Client received a ${error.response.status}`
-    );
+    return new ResponseError(error.response.status);
   } else if (error.request) {
     // client never received a response, or request never left
-    return new Error('RequestError - Request failed to send');
+    return new RequestError();
   } else {
-    return new Error(
-      'UnknownError - Something went wrong when processing the request'
-    );
+    return new UnknownError();
   }
 };
 
