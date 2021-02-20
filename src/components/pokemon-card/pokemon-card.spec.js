@@ -15,6 +15,18 @@ describe('Pokemon Card', () => {
     expect(screen.getByText('Types: psychic')).toBeInTheDocument();
     expect(screen.getByRole('img')).toBeInTheDocument();
   });
+
+  it('renders a message if pokemonData contains an error', () => {
+    // Arrange
+    render(<PokemonCard pokemonData={new Error()} />);
+
+    // Act & Assert
+    expect(
+      screen.getByText(
+        "Sorry, but we can't find that Pokemon. Please try again."
+      )
+    ).toBeInTheDocument();
+  });
 });
 
 const POKEMON_DATA = {
