@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { getPokemon } from 'packages/pokeapi';
-import Pokemon from 'components/pokemon-card/pokemon-card';
+import PokemonCard from 'components/pokemon-card/pokemon-card';
 
 const SearchWidget = () => {
   const [searchStr, setSearchStr] = useState('');
@@ -8,8 +8,8 @@ const SearchWidget = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    const data = await getPokemon({ query: searchStr });
-    setPokemon(data);
+    const fetchedPokemon = await getPokemon({ query: searchStr });
+    setPokemon(fetchedPokemon);
     setSearchStr('');
   };
 
@@ -25,8 +25,7 @@ const SearchWidget = () => {
         />
         <button type="submit">Search</button>
       </form>
-      {/* May need to deep copy this later on */}
-      {pokemon ? <Pokemon pokemonData={pokemon} /> : null}
+      {pokemon ? <PokemonCard pokemonData={pokemon} /> : null}
     </>
   );
 };
