@@ -4,6 +4,10 @@ const PokemonCard = ({ pokemonData }) => {
   const { id, name, height, weight, types, image } = pokemonData;
   const formattedName = name[0].toUpperCase() + name.substring(1);
 
+  if (pokemonData instanceof Error) {
+    return <p>Sorry, but we can't find that Pokemon. Please try again.</p>;
+  }
+
   return (
     <>
       <div>
