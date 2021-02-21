@@ -6,26 +6,43 @@ import {
   UnknownError
 } from './errors';
 
-const getPokemonList = async ({ offset = 0, limit = 20 }) => {
+const baseUrl = 'https://pokeapi.co/api/v2/pokemon/';
+
+const getPokemonList = async ({ offset = 0, limit = 20, cache }) => {
   try {
-    const response = await axios.get(
-      `https://pokeapi.co/api/v2/pokemon/?offset=${offset}&limit=${limit}`
-    );
-    // TODO - do the data transformation here
+    const response = await apiGet({
+      uri: `?offset=${offset}&limit=${limit}`,
+      cache
+    });
     return response.data;
   } catch (error) {
     return handleError(error);
   }
+  // TODO - do the data transformation here
+  // TODO - add to cache
 };
 
-const getPokemon = async ({ query = '1' }) => {
+const getPokemon = async ({ query = '1', cache = {} }) => {
   let response;
   try {
-    response = await axios.get(`https://pokeapi.co/api/v2/pokemon/${query}`);
+    response = await apiGet({ uri: query, cache });
   } catch (error) {
     return handleError(error);
   }
+  // Add JSON response to the cache
+  cache[query] = response;
   return transformPokemonResponse({ response });
+};
+
+const apiGet = async ({ uri, cache = {} }) => {
+  // Check if the requested resource is in the cache
+  const cached = cache[uri];
+
+  if (cached) {
+    return cached;
+  } else {
+    return await axios.get(`${baseUrl}${uri}`);
+  }
 };
 
 const transformPokemonResponse = ({ response }) => {
