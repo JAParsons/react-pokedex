@@ -30,19 +30,36 @@ const getPokemon = async ({ query = '1', cache = {} }) => {
     return handleError(error);
   }
   // Add JSON response to the cache
-  cache[query] = response;
+  setCacheItem({ key: query, value: response, cache });
   return transformPokemonResponse({ response });
 };
 
 const apiGet = async ({ uri, cache = {} }) => {
   // Check if the requested resource is in the cache
-  const cached = cache[uri];
-
-  if (cached) {
-    return cached;
-  } else {
+  const cached = getCacheItem({ key: uri, cache });
+  if (!cached) {
     return await axios.get(`${baseUrl}${uri}`);
   }
+
+  return cached;
+};
+
+const getCacheItem = ({ key, cache }) => {
+  // Check if the requested resource is in the cache
+  // const cached = cache.getItem(key) || null;
+  const cached = cache[key] || null;
+
+  if (cached) {
+    // localStorage stores values as strings, so we need to parse the
+    // cached response into a JSON object
+    return JSON.parse(cached);
+  }
+
+  return cached;
+};
+
+const setCacheItem = ({ key, value, cache }) => {
+  cache[key] = JSON.stringify(value);
 };
 
 const transformPokemonResponse = ({ response }) => {

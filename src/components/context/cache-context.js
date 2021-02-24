@@ -3,7 +3,8 @@ import { createContext, useState } from 'react';
 const CacheContext = createContext();
 
 const CacheProvider = ({ children }) => {
-  const [cache, setCache] = useState({});
+  // set cache to be the reference to window.localStorage
+  const [cache, setCache] = useState(localStorage);
 
   return (
     <CacheContext.Provider value={cache}>{children}</CacheContext.Provider>
