@@ -2,6 +2,8 @@ import axios from 'axios';
 import {
   getPokemonList,
   getPokemon,
+  getCacheItem,
+  setCacheItem,
   transformPokemonResponse
 } from './api-adapter';
 import {
@@ -74,7 +76,7 @@ describe('fetch a list of Pokemon', () => {
   });
 });
 
-describe('fetches individual Pokemon', () => {
+describe('fetches an individual Pokemon', () => {
   beforeEach(() => {
     // Arrange
     axios.get.mockImplementation(() => Promise.resolve(POKEMON));
@@ -107,6 +109,40 @@ describe('fetches individual Pokemon', () => {
 
     // Assert
     expect(pokemon.name).toBe('bulbasaur');
+  });
+});
+
+describe('cache responses', () => {
+  beforeEach(() => {
+    // Arrange
+    axios.get.mockImplementation(() => Promise.resolve(POKEMON));
+  });
+
+  it('adds an individual Pokemon to the cache', async () => {
+    // Arrange
+    const cache = {};
+
+    // Act
+    await getPokemon({ query: 25, cache });
+    const cachedPokemon = getCacheItem({ key: '25', cache });
+
+    // Assert
+    expect(axios.get).toHaveBeenCalledTimes(1);
+    expect(cachedPokemon).toEqual(POKEMON);
+  });
+
+  it.only('fetches an individual Pokemon from the cache', async () => {
+    // Arrange
+    const cache = {};
+    setCacheItem({ key: '25', value: POKEMON, cache });
+
+    // Act
+    await getPokemon({ query: 25, cache });
+    const cachedPokemon = getCacheItem({ key: '25', cache });
+
+    // Assert
+    expect(axios.get).toHaveBeenCalledTimes(0);
+    expect(cachedPokemon).toEqual(POKEMON);
   });
 });
 

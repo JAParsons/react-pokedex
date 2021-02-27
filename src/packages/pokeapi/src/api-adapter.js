@@ -98,4 +98,10 @@ const handleError = (error) => {
   }
 };
 
-export { getPokemonList, getPokemon, transformPokemonResponse };
+export {
+  getPokemonList,
+  getPokemon,
+  getCacheItem,
+  setCacheItem,
+  transformPokemonResponse
+};
