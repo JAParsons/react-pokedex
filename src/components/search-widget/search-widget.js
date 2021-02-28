@@ -9,7 +9,8 @@ const SearchWidget = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    const fetchedPokemon = await getPokemon({ query: searchStr, cache });
+    const query = searchStr.toLowerCase();
+    const fetchedPokemon = await getPokemon({ query, cache });
     setPokemon(fetchedPokemon);
     setSearchStr('');
   };
