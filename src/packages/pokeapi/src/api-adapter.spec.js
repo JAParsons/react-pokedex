@@ -16,6 +16,10 @@ import {
 jest.mock('axios');
 
 describe('fetch a list of Pokemon', () => {
+  beforeEach(() => {
+    localStorage.clear();
+  });
+
   it('fetches a list of Pokemon', async () => {
     // Arrange
     axios.get.mockImplementation(() => Promise.resolve(DEFAULT_POKEMON_LIST));
@@ -79,6 +83,7 @@ describe('fetch a list of Pokemon', () => {
 describe('fetches an individual Pokemon', () => {
   beforeEach(() => {
     // Arrange
+    localStorage.clear();
     axios.get.mockImplementation(() => Promise.resolve(POKEMON));
   });
 
@@ -115,6 +120,7 @@ describe('fetches an individual Pokemon', () => {
 describe('cache responses', () => {
   beforeEach(() => {
     // Arrange
+    localStorage.clear();
     axios.get.mockImplementation(() => Promise.resolve(POKEMON));
   });
 
@@ -147,6 +153,10 @@ describe('cache responses', () => {
 });
 
 describe('error handling', () => {
+  beforeEach(() => {
+    localStorage.clear();
+  });
+
   it('returns a ResponseError if the API throws a 404', async () => {
     // Arrange
     axios.get.mockImplementation(() =>

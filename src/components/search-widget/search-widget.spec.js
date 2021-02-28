@@ -9,6 +9,7 @@ jest.mock('axios');
 describe('search widget', () => {
   beforeEach(() => {
     // Arrange
+    localStorage.clear();
     render(<SearchWidget />);
   });
 
