@@ -1,4 +1,3 @@
-import { CacheProvider } from './components/context/cache-context';
 import SearchWidget from 'components/search-widget/search-widget';
 import './app.css';
 
@@ -7,9 +6,7 @@ const App = () => {
     <div className="App">
       <header className="App-header">
         <p>Pokedex built in React</p>
-        <CacheProvider>
-          <SearchWidget />
-        </CacheProvider>
+        <SearchWidget />
       </header>
     </div>
   );
