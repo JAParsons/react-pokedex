@@ -131,7 +131,7 @@ describe('cache responses', () => {
     expect(cachedPokemon).toEqual(POKEMON);
   });
 
-  it.only('fetches an individual Pokemon from the cache', async () => {
+  it('fetches an individual Pokemon from the cache', async () => {
     // Arrange
     const cache = {};
     setCacheItem({ key: '25', value: POKEMON, cache });
