@@ -4,7 +4,8 @@ import {
   getPokemon,
   getCacheItem,
   setCacheItem,
-  transformPokemonResponse
+  transformPokemonResponse,
+  transformPokemonListResponse
 } from './api-adapter';
 import {
   RequestError,
@@ -28,11 +29,10 @@ describe('fetch a list of Pokemon', () => {
     const response = await getPokemonList({});
 
     // Assert
-    expect(response).toHaveProperty('count');
-    expect(response).toHaveProperty('next');
-    expect(response).toHaveProperty('previous');
-    expect(response).toHaveProperty('results');
-    expect(response.results).not.toBeNull();
+    expect(response).toHaveProperty('nextPage');
+    expect(response).toHaveProperty('previousPage');
+    expect(response).toHaveProperty('pokemonList');
+    expect(response.pokemonList).not.toBeNull();
   });
 
   it('fetches the next 20 Pokemon when the offset is 20', async () => {
@@ -42,7 +42,7 @@ describe('fetch a list of Pokemon', () => {
     );
 
     // Act
-    const { results: pokemonList } = await getPokemonList({ offset: 20 });
+    const { pokemonList } = await getPokemonList({ offset: 20 });
 
     // Assert
     expect(pokemonList.length).toBe(20);
@@ -55,7 +55,7 @@ describe('fetch a list of Pokemon', () => {
     axios.get.mockImplementation(() => Promise.resolve(POKEMON_LIST_LIMIT_100));
 
     // Act
-    const { results: pokemonList } = await getPokemonList({});
+    const { pokemonList } = await getPokemonList({});
 
     // Assert
     expect(pokemonList.length).toBe(100);
@@ -68,7 +68,7 @@ describe('fetch a list of Pokemon', () => {
     );
 
     // Act
-    const { results: pokemonList } = await getPokemonList({
+    const { pokemonList } = await getPokemonList({
       offset: 3,
       limit: 3
     });
@@ -121,11 +121,11 @@ describe('cache responses', () => {
   beforeEach(() => {
     // Arrange
     localStorage.clear();
-    axios.get.mockImplementation(() => Promise.resolve(POKEMON));
   });
 
   it('adds an individual Pokemon to the cache', async () => {
     // Arrange
+    axios.get.mockImplementation(() => Promise.resolve(POKEMON));
     const cache = {};
 
     // Act
@@ -139,6 +139,7 @@ describe('cache responses', () => {
 
   it('fetches an individual Pokemon from the cache', async () => {
     // Arrange
+    axios.get.mockImplementation(() => Promise.resolve(POKEMON));
     const cache = {};
     setCacheItem({ key: '25', value: POKEMON, cache });
 
@@ -149,6 +150,50 @@ describe('cache responses', () => {
     // Assert
     expect(axios.get).toHaveBeenCalledTimes(0);
     expect(cachedPokemon).toEqual(POKEMON);
+  });
+
+  it('adds a list of Pokemon to the cache', async () => {
+    // Arrange
+    axios.get.mockImplementation(() =>
+      Promise.resolve(POKEMON_LIST_OFFSET_3_LIMIT_3)
+    );
+    const cache = {};
+    const offset = 3;
+    const limit = 3;
+
+    // Act
+    await getPokemonList({ offset, limit, cache });
+    const cachedPokemonList = getCacheItem({
+      key: `?offset=${offset}&limit=${limit}`,
+      cache
+    });
+
+    // Assert
+    expect(axios.get).toHaveBeenCalledTimes(1);
+    expect(cachedPokemonList).toEqual(POKEMON_LIST_OFFSET_3_LIMIT_3);
+  });
+
+  it('fetches a list of Pokemon from the cache', async () => {
+    // Arrange
+    axios.get.mockImplementation(() =>
+      Promise.resolve(POKEMON_LIST_OFFSET_3_LIMIT_3)
+    );
+    const cache = {};
+    const offset = 3;
+    const limit = 3;
+    const key = `?offset=${offset}&limit=${limit}`;
+    setCacheItem({ key, value: POKEMON_LIST_OFFSET_3_LIMIT_3, cache });
+
+    // Act
+    await getPokemonList({ offset, limit, cache });
+    const cachedPokemon = getCacheItem({
+      key,
+      cache
+    });
+
+    // Assert
+    expect(axios.get).toHaveBeenCalledTimes(0);
+    expect(cachedPokemon).toEqual(POKEMON_LIST_OFFSET_3_LIMIT_3);
   });
 });
 
@@ -238,6 +283,20 @@ describe('response transformations', () => {
     expect(transformedPokemon).toHaveProperty('types');
     expect(transformedPokemon.types).toBeInstanceOf(Array);
     expect(transformedPokemon).toHaveProperty('image');
+  });
+
+  it('transforms the response for a list of Pokemon', () => {
+    // Act
+    const transformedPokemonList = transformPokemonListResponse({
+      response: DEFAULT_POKEMON_LIST
+    });
+
+    // Assert
+    expect(transformedPokemonList).toBeInstanceOf(Object);
+    expect(transformedPokemonList).toHaveProperty('nextPage');
+    expect(transformedPokemonList).toHaveProperty('previousPage');
+    expect(transformedPokemonList).toHaveProperty('pokemonList');
+    expect(transformedPokemonList.pokemonList).toBeInstanceOf(Array);
   });
 });
 

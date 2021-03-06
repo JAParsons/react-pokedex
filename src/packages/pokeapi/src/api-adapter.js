@@ -8,22 +8,26 @@ import {
 
 const baseUrl = 'https://pokeapi.co/api/v2/pokemon/';
 
-const getPokemonList = async ({ offset = 0, limit = 20, cache }) => {
+const getPokemonList = async ({ offset = 0, limit = 20, cache = {} }) => {
+  const uri = `?offset=${offset}&limit=${limit}`;
+  let response;
+
   try {
-    const response = await apiGet({
-      uri: `?offset=${offset}&limit=${limit}`,
+    response = await apiGet({
+      uri,
       cache
     });
-    return response.data;
   } catch (error) {
     return handleError(error);
   }
-  // TODO - do the data transformation here
-  // TODO - add to cache
+  // Add JSON response to the cache
+  setCacheItem({ key: uri, value: response, cache });
+  return transformPokemonListResponse({ response });
 };
 
 const getPokemon = async ({ query = '1', cache = {} }) => {
   let response;
+
   try {
     response = await apiGet({ uri: query, cache });
   } catch (error) {
@@ -86,6 +90,18 @@ const transformPokemonResponse = ({ response }) => {
   }
 };
 
+const transformPokemonListResponse = ({ response }) => {
+  try {
+    const {
+      data: { next: nextPage, previous: previousPage, results: pokemonList }
+    } = response;
+
+    return { nextPage, previousPage, pokemonList: [...pokemonList] };
+  } catch (error) {
+    return new ParsingError();
+  }
+};
+
 const handleError = (error) => {
   if (error.response) {
     // client received an error response (5xx, 4xx)
@@ -103,5 +119,6 @@ export {
   getPokemon,
   getCacheItem,
   setCacheItem,
-  transformPokemonResponse
+  transformPokemonResponse,
+  transformPokemonListResponse
 };
